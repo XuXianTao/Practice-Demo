@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset=”utf-8”>
+
+  <title>题目</title>
+
+  <meta name=”viewport” content=”width=device-width,initial-scale=1,user-scalable=no”>
+
+  <script>
+
+    var data = [
+      {
+        name: '北京',
+        items: [
+          {
+            name: '北京',
+            items: [
+              {
+                name: '东城区'
+              },
+              {
+                name: '西城区'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: '浙江',
+        items: [
+          {
+            name: '杭州',
+            items: [
+              {
+                name: '上城区'
+              },
+              {
+                name: '桐庐县'
+              }
+            ]
+          },
+          {
+            name: '宁波',
+            items: [
+              {
+                name: '象山县'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+    // 要求：实现省市区三级下拉联动
+
+    // 初始的select需要使用js通过数据构建，数据结构使用上方data变量中的结构，无需考虑页面样式，实现功能即可
+
+    // 填充代码在下方
+
+    window.onload = function () {
+      function clear_sibling(level) {
+        node = document.getElementById(level);
+        while (node.nextSibling) {
+          document.body.removeChild(node.nextSibling);
+        }
+      }
+      function create_select(options, level) {
+        var select = document.createElement('select');
+        select.id = level;
+        var tmp = document.createElement('option');
+        tmp.innerHTML = '--';
+        select.appendChild(tmp);
+        for (item of Object.entries(options)) {
+          index = item[0];
+          item = item[1];
+          var option = document.createElement('option');
+          option.value = item.name;
+          option.innerHTML = item.name;
+          select.appendChild(option);
+        }
+        document.body.appendChild(select);
+        return select;
+      }
+      function deal_data(input) {
+        input.forEach(function (item, index) {
+          if (item['items']) deal_data(item['items']);
+          input[item['name']] = item;
+          delete input[index];
+        })
+      }
+      deal_data(data);
+      var s1 = create_select(data,1);
+      s1.onchange = function () {
+        var pv = this.value;
+        clear_sibling(1);
+        var s2 = create_select(data[pv]['items'],2);
+        s2.onchange = function () {
+          var ct = this.value;
+          clear_sibling(2);
+          var s3 = create_select(data[pv]['items'][ct]['items'],3);
+        }
+      }
+    }
+  </script>
+
+</head>
+
+<body>
+
+</body>
+
+</html>
